@@ -32,13 +32,12 @@ const typeDefs = gql`
         id: Int!,
         username: String!,
 		email: String!,
-		emailVerified: Boolean!,
+		emailVerified: Boolean,
 		products: [Product],
 		comments: [Comment]
     }
 
     type Query {
-
         getProduct(id: Int!): Product
         getProducts: [Product],
 		getProductComments(id: Int!): [Comment],
@@ -48,8 +47,15 @@ const typeDefs = gql`
         getCustomer(id: Int!): Customer,
     }
 
+    type Mutation {
+        addCustomer(username: String!, email: String!, password: String!): Customer,
+        addProduct(name: String!, price: Int!, description: String!, customerId: Int!): Product,
+        addComment(body: String!, productId: Int!, customerId: Int!): Comment,
+    }
+
     schema {
-        query: Query
+        query: Query,
+        mutation: Mutation
     }
 `;
 
@@ -62,7 +68,12 @@ const resolvers = {
 
 		getCustomers: (root, args, { dataSources }) => dataSources.glCustomersAPI.getCustomers(),
 		getCustomer: (root, { id }, { dataSources }) => dataSources.glCustomersAPI.getCustomer(id),
-	},
+    },
+    Mutation: {
+        addCustomer: (root, customer, { dataSources }) => dataSources.glCustomersAPI.postCustomer(customer),
+        addProduct: (root, product, { dataSources }) => dataSources.glProductsAPI.postProduct(product),
+        addComment: (root, comment, { dataSources }) => dataSources.glProductsAPI.postProductComment(comment),
+    },
 	Product: {
 		customer: ({ id }, arg, { dataSources }) => dataSources.glCustomersAPI.getCustomer(id),
 		comments: ({ id }, arg, { dataSources }) => dataSources.glProductsAPI.getProductComments(id)
@@ -80,7 +91,7 @@ const server = new ApolloServer({
 		glProductsAPI: new GlProductsAPI(),
 		glCommentsAPI: new GlCommentsAPI(),
 		glCustomersAPI: new GlCustomersAPI(),
-	}),
+    })
 });
 
 server.listen(3001).then(({ url }) => {

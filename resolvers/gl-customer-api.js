@@ -1,5 +1,6 @@
 import { RESTDataSource } from 'apollo-datasource-rest';
 import { baseURL } from './../config/enviroment'
+import errorHandler from './../utils/error-handler';
 
 export class GlCustomersAPI extends RESTDataSource {
 
@@ -9,37 +10,23 @@ export class GlCustomersAPI extends RESTDataSource {
 	}
 
 	async getCustomers() {
-		return this.get(`Customers`);
+		return await this.get(`Customers`).catch(errorHandler);
 	}
 
 	async getCustomer(id) {
-		let result;
-		try {
-			result = await this.get(`Customers/${id}`);
-		} catch (e) {
-			console.log('customer', e)
-		}
-		return result;
+		return await this.get(`Customers/${id}`).catch(errorHandler);
 	}
 
 	async getCustomerProducts(id) {
-		let result;
-		try {
-			result = await this.get(`Customers/${id}/products`);
-		} catch (e) {
-			console.log('customer', e)
-		}
-		return result;
+		return await this.get(`Customers/${id}/products`).catch(errorHandler);
 	}
 
 	async getCustomerComments(id) {
-		let result;
-		try {
-			result = await this.get(`Customers/${id}/comments`);
-		} catch (e) {
-			console.log('customer', e)
-		}
-		return result;
+		return await this.get(`Customers/${id}/comments`).catch(errorHandler);
 	}
 
-};
+	async postCustomer(customer) {
+		return await this.post(`Customers`, customer).catch(errorHandler);
+	}
+
+}
