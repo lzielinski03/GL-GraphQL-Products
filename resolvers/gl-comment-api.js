@@ -1,11 +1,11 @@
 import { RESTDataSource } from 'apollo-datasource-rest';
-import { baseURL } from './../config/enviroment'
+import { ProductApiEndpoint } from './../config/enviroment'
 
 export class GlCommentsAPI extends RESTDataSource {
 
 	constructor() {
 		super();
-		this.baseURL = baseURL;
+		this.baseURL = ProductApiEndpoint;
 	}
 
 	async getComments() {

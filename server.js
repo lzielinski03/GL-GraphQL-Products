@@ -1,5 +1,5 @@
 import { ApolloServer, gql } from 'apollo-server';
-import { GlProductsAPI, GlCommentsAPI, GlCustomersAPI } from './resolvers'
+import { GlProductsAPI, GlCommentsAPI, GlCustomersAPI, GlBinaryStore } from './resolvers'
 
 const typeDefs = gql`
 
@@ -37,6 +37,31 @@ const typeDefs = gql`
 		comments: [Comment]
     }
 
+    type Container {
+        container: String!
+    }
+
+    type Metadata {
+        container: Container!,
+        filename: String!,
+        mimetype: String!
+    }
+
+    type BinaryMetadata {
+        id: Int!,
+        filename: String!,
+        contentType: String!,
+        length: Int!,
+        chunkSize: Int!,
+        uploadDate: DateC,
+        metadata: Metadata!,
+        md5: String!
+    }
+
+    type Binary {
+        container: Container!,
+    }
+
     type Query {
         getProduct(id: Int!): Product
         getProducts: [Product],
@@ -44,7 +69,8 @@ const typeDefs = gql`
 		getProductCustomer(id: Int!): Customer,
 		
         getCustomers: [Customer],
-        getCustomer(id: Int!): Customer,
+        getCustomer(id: Int!): Customer
+        getContainers: [Container]
     }
 
     type Mutation {
@@ -67,7 +93,10 @@ const resolvers = {
 		getProductCustomer: (root, { id }, { dataSources }) => dataSources.glProductsAPI.getProductCustomer(id),
 
 		getCustomers: (root, args, { dataSources }) => dataSources.glCustomersAPI.getCustomers(),
-		getCustomer: (root, { id }, { dataSources }) => dataSources.glCustomersAPI.getCustomer(id),
+        getCustomer: (root, { id }, { dataSources }) => dataSources.glCustomersAPI.getCustomer(id),
+        
+        getContainers: (root, args, { dataSources }) => dataSources.glBinaryStore.getContainers(),
+        
     },
     Mutation: {
         addCustomer: (root, customer, { dataSources }) => dataSources.glCustomersAPI.postCustomer(customer),
@@ -90,7 +119,8 @@ const server = new ApolloServer({
 	dataSources: () => ({
 		glProductsAPI: new GlProductsAPI(),
 		glCommentsAPI: new GlCommentsAPI(),
-		glCustomersAPI: new GlCustomersAPI(),
+        glCustomersAPI: new GlCustomersAPI(),
+        glBinaryStore: new GlBinaryStore()
     })
 });
 

@@ -1,12 +1,12 @@
 import { RESTDataSource } from 'apollo-datasource-rest';
-import { baseURL } from './../config/enviroment'
+import { ProductApiEndpoint } from './../config/enviroment'
 import errorHandler from './../utils/error-handler';
 
 export class GlProductsAPI extends RESTDataSource {
 
 	constructor() {
 		super();
-		this.baseURL = baseURL;
+		this.baseURL = ProductApiEndpoint;
 	}
 
 	async getProduct(id) {
