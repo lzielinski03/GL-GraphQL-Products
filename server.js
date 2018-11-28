@@ -71,7 +71,7 @@ const typeDefs = gql`
         getCustomers: [Customer],
         getCustomer(id: Int!): Customer
         getContainers: [Container]
-        getContainerBinary(container: String!, name: String!)
+        
     }
 
     type Mutation {
